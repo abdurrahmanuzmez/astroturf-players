@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
     StyleSheet,
     View,
@@ -8,15 +8,15 @@ import {
     TouchableOpacity,
     KeyboardAvoidingView,
     ActivityIndicator,
-    Keyboard,
-    TouchableWithoutFeedback
-} from 'react-native';
-import 'firebase/firestore';
-import firebase from 'firebase';
+    TouchableWithoutFeedback,
+    Keyboard
+} from "react-native";
+import "firebase/firestore";
+import firebase from "firebase";
 import * as Facebook from 'expo-facebook'
 import * as GoogleSignIn from 'expo-google-sign-in'
-class SignUpScreen extends React.Component {
-    state = { displayName: '', email: '', password: '', errorMessage: '', loading: false };
+class SignInScreen extends React.Component {
+    state = { email: '', password: '', errorMessage: '', loading: false };
     onLoginSuccess() {
         this.props.navigation.navigate('App');
     }
@@ -35,7 +35,7 @@ class SignUpScreen extends React.Component {
     async signInWithEmail() {
         await firebase
             .auth()
-            .createUserWithEmailAndPassword(this.state.email, this.state.password)
+            .signInWithEmailAndPassword(this.state.email, this.state.password)
             .then(this.onLoginSuccess.bind(this))
             .catch(error => {
                 let errorCode = error.code;
@@ -56,7 +56,7 @@ class SignUpScreen extends React.Component {
                 await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
                 const credential = firebase.auth.FacebookAuthProvider.credential(token);
                 const facebookProfileData = await firebase.auth().signInWithCredential(credential);
-                this.onLoginSuccess.bind(this);
+                this.onLoginSuccess.bind(this)
             }
         } catch ({ message }) {
             alert(`Facebook Login Error: ${message}`);
@@ -66,9 +66,10 @@ class SignUpScreen extends React.Component {
         try {
             await GoogleSignIn.askForPlayServicesAsync();
             const { type, user } = await GoogleSignIn.signInAsync();
+            const data = await GoogleSignIn.GoogleAuthentication.prototype.toJSON();
             if (type === 'success') {
                 await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-                const credential = firebase.auth.GoogleAuthProvider.credential(user.auth.idToken, user.auth.accessToken,);
+                const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken);
                 const googleProfileData = await firebase.auth().signInWithCredential(credential);
                 this.onLoginSuccess.bind(this);
             }
@@ -85,19 +86,10 @@ class SignUpScreen extends React.Component {
             >
                 <SafeAreaView style={{ flex: 1 }}>
                     <KeyboardAvoidingView style={styles.container} behavior="padding">
-                        <Text style={{ fontSize: 32, fontWeight: '700', color: 'gray' }}>
+                        <Text style={{ fontSize: 32, fontWeight: "700", color: "gray" }}>
                             App Name
                         </Text>
                         <View style={styles.form}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Name"
-                                placeholderTextColor="#B1B1B1"
-                                returnKeyType="next"
-                                textContentType="name"
-                                value={this.state.displayName}
-                                onChangeText={displayName => this.setState({ displayName })}
-                            />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Email"
@@ -123,28 +115,27 @@ class SignUpScreen extends React.Component {
                         <Text
                             style={{
                                 fontSize: 18,
-                                textAlign: 'center',
-                                color: 'red',
-                                width: '80%'
+                                textAlign: "center",
+                                color: "red",
+                                width: "80%"
                             }}
                         >
                             {this.state.error}
                         </Text>
                         <TouchableOpacity
                             style={{ width: '86%', marginTop: 10 }}
-                            onPress={() => this.signInWithEmail()}
-                        >
-                            <Text>Sign Up</Text>
+                            onPress={() => this.signInWithEmail()}>
+                            <Text>Sign In</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={{ width: '86%', marginTop: 10 }}
+                            style={{ width: "86%", marginTop: 10 }}
                             onPress={() => this.signInWithFacebook()}>
                             <View style={styles.button}>
                                 <Text
                                     style={{
                                         letterSpacing: 0.5,
                                         fontSize: 16,
-                                        color: '#FFFFFF'
+                                        color: "#FFFFFF"
                                     }}
                                 >
                                     Continue with Facebook
@@ -152,14 +143,14 @@ class SignUpScreen extends React.Component {
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={{ width: '86%', marginTop: 10 }}
+                            style={{ width: "86%", marginTop: 10 }}
                             onPress={() => this.signInWithGoogle()}>
                             <View style={styles.googleButton}>
                                 <Text
                                     style={{
                                         letterSpacing: 0.5,
                                         fontSize: 16,
-                                        color: '#707070'
+                                        color: "#707070"
                                     }}
                                 >
                                     Continue with Google
@@ -168,12 +159,12 @@ class SignUpScreen extends React.Component {
                         </TouchableOpacity>
                         <View style={{ marginTop: 10 }}>
                             <Text
-                                style={{ fontWeight: '200', fontSize: 17, textAlign: 'center' }}
+                                style={{ fontWeight: "200", fontSize: 17, textAlign: "center" }}
                                 onPress={() => {
-                                    this.props.navigation.navigate('SignIn');
+                                    this.props.navigation.navigate("SignUp");
                                 }}
                             >
-                                Already have an account?
+                                Don't have an Account?
                             </Text>
                         </View>
                     </KeyboardAvoidingView>
@@ -185,11 +176,11 @@ class SignUpScreen extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexDirection: 'column',
-        alignItems: 'center'
+        flexDirection: "column",
+        alignItems: "center"
     },
     form: {
-        width: '86%',
+        width: "86%",
         marginTop: 15
     },
     logo: {
@@ -197,28 +188,28 @@ const styles = StyleSheet.create({
     },
     input: {
         fontSize: 20,
-        borderColor: '#707070',
+        borderColor: "#707070",
         borderBottomWidth: 1,
         paddingBottom: 1.5,
         marginTop: 25.5
     },
     button: {
-        backgroundColor: '#3A559F',
+        backgroundColor: "#3A559F",
         height: 44,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
         borderRadius: 22
     },
     googleButton: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: "#FFFFFF",
         height: 44,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
         borderRadius: 22,
         borderWidth: 1,
-        borderColor: '#707070'
+        borderColor: "#707070"
     }
 });
-export default SignUpScreen;
+export default SignInScreen;

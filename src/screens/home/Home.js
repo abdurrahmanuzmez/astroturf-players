@@ -1,25 +1,33 @@
-import * as React from 'react';
-import { StyleSheet, Platform, Image, Text, View } from 'react-native'
-
-class Home extends React.Component{
-    state = { currentUser: null }
+import React from 'react';
+import { StyleSheet, Text, View, SafeAreaView, Button } from 'react-native';
+import firebase from 'firebase';
+class Home extends React.Component {
+    state = { user: {} };
+    componentDidMount() {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user != null) {
+                this.setState({user: user});
+            }
+        })
+    }
     render() {
-        const { currentUser } = this.state
         return (
-            <View style={styles.container}>
-                <Text>
-                    Hi {currentUser && currentUser.email}!
-                </Text>
-            </View>
-        )
+            <SafeAreaView style={{ flex: 1 }}>
+                <View style={styles.container}>
+                    <Text>{this.state.user.email}</Text>
+                    <Button title="Log Off" onPress={() => {
+                        firebase.auth().signOut();
+                    }}/>
+                </View>
+            </SafeAreaView>
+        );
     }
 }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center'
     }
-})
-
+});
 export default Home;

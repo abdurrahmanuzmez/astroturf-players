@@ -1,22 +1,17 @@
-import React from 'react';
-import { StyleSheet, Platform, Image, Text, View } from 'react-native'
-import { SwitchNavigator } from 'react-navigation'
-
-import {Home} from './src/screens/home'
-import SignUp from './src/screens/signup/SignUp'
-import Loading from './src/components/loading/Loading'
-import Login from './src/screens/login/Login'
-
-const App = SwitchNavigator(
-    {
-        Loading,
-        SignUp,
-        Login,
-        Home
-    },
-    {
-        initialRouteName: 'Loading'
-    }
-)
-export default App
-
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import * as firebase from 'firebase';
+import { firebaseConfig } from './src/config/firebase';
+import AuthNavigator from './src/screens/authnavigator/AuthNavigator';
+import Home from './src/screens/home/Home';
+firebase.initializeApp(firebaseConfig);
+export default createAppContainer(
+    createSwitchNavigator(
+        {
+            Auth: AuthNavigator,
+            App: Home,
+        },
+        {
+            initialRouteName: 'Auth'
+        }
+    )
+);
